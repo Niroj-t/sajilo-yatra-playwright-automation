@@ -1,0 +1,43 @@
+:root { --crimson:#C8102E; --blue:#003893; --ink:#1f2433; --muted:#6b7080; --bg:#f5f6fa; --line:#e3e5ee; --ok:#1e7d45; --okbg:#e3f5ea; --err:#a8261b; --errbg:#fde8e5; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); }
+header.topbar { background: var(--blue); color: #fff; display: flex; align-items: center; gap: 24px; padding: 12px 28px; flex-wrap: wrap; }
+header .brand { color: #fff; font-weight: 700; font-size: 20px; text-decoration: none; }
+header .brand span { color: #ffb3bf; }
+header nav { display: flex; gap: 16px; flex: 1; }
+header nav a { color: #dfe6ff; text-decoration: none; padding: 4px 2px; border-bottom: 2px solid transparent; }
+header nav a[aria-current="page"] { color: #fff; border-bottom-color: #ffb3bf; }
+header .welcome { font-size: 14px; color: #dfe6ff; }
+header button { background: transparent; border: 1px solid #9fb2e6; color: #fff; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+main { max-width: 980px; margin: 28px auto; padding: 0 20px; }
+h1 { font-size: 26px; margin: 0 0 18px; }
+h2 { font-size: 18px; margin: 0 0 14px; color: var(--blue); }
+section.card, .login-card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; margin-bottom: 20px; }
+.grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+input, select { width: 100%; padding: 9px 10px; border: 1px solid #c9ccd8; border-radius: 6px; font-size: 15px; }
+button.primary { background: var(--crimson); color: #fff; border: 0; border-radius: 6px; padding: 10px 18px; font-size: 15px; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 14px; }
+th { color: var(--muted); font-weight: 600; }
+.badge { padding: 2px 10px; border-radius: 12px; font-size: 13px; }
+.badge.Confirmed { background: var(--okbg); color: var(--ok); }
+.badge.Cancelled { background: #eceef3; color: var(--muted); }
+td button { background: #fff; border: 1px solid var(--crimson); color: var(--crimson); border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+.message { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 8px; margin-bottom: 18px; }
+.message[hidden] { display: none; }
+.message[data-type="success"] { background: var(--okbg); color: var(--ok); }
+.message[data-type="error"] { background: var(--errbg); color: var(--err); }
+.message .dismiss { background: none; border: 0; color: inherit; cursor: pointer; font-size: 20px; line-height: 1; }
+.message .dismiss::after { content: "\00D7"; }
+.login-wrap { max-width: 400px; margin: 70px auto; padding: 0 20px; }
+.hero { text-align: center; margin-bottom: 22px; }
+.hero .logo { font-size: 30px; font-weight: 700; color: var(--blue); }
+.hero .logo span { color: var(--crimson); }
+.hero p { color: var(--muted); margin: 6px 0 0; }
+.login-card .field { margin-bottom: 14px; }
+.login-card button.primary { width: 100%; }
+.hint { font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px; }
+dl { display: grid; grid-template-columns: 160px 1fr; gap: 10px 16px; margin: 0; }
+dt { color: var(--muted); }
+dd { margin: 0; font-weight: 600; }

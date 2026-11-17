@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log in | Sajilo Yatra</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="hero">
+    <div class="logo">Sajilo <span>Yatra</span></div>
+    <p>Book bus tickets across Nepal</p>
+  </div>
+
+  <div class="message" role="status" data-testid="message" hidden>
+    <span class="message-text"></span>
+    <button type="button" class="dismiss" aria-label="Dismiss message"></button>
+  </div>
+
+  <form class="login-card" id="login-form" novalidate>
+    <h1>Log in</h1>
+    <div class="field">
+      <label for="username">Username</label>
+      <input id="username" name="username" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password">
+    </div>
+    <button type="submit" class="primary">Log in</button>
+    <p class="hint">Practice accounts: ram.thapa or sita.gurung, password Yatra@123</p>
+  </form>
+</div>
+
+<script>
+  const box = document.querySelector('[data-testid="message"]');
+  function showMessage(text, type) {
+    box.querySelector('.message-text').textContent = text;
+    box.dataset.type = type;
+    box.hidden = false;
+  }
+  box.querySelector('.dismiss').addEventListener('click', () => { box.hidden = true; });
+
+  if (new URLSearchParams(location.search).has('loggedOut')) {
+    showMessage('You have logged out', 'success');
+  }
+
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+      }),
+    });
+    if (res.ok) { location.href = '/bookings'; return; }
+    const data = await res.json();
+    showMessage(data.error, 'error');
+  });
+</script>
+</body>
+</html>

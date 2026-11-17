@@ -1,0 +1,11 @@
+{
+  "name": "sajilo-yatra",
+  "version": "1.0.0",
+  "description": "Qrius Module 8 Session 1 lab app: a tiny bus ticket booking site for practising the Page Object Model",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "start:redesign": "node server.js --redesign"
+  },
+  "engines": { "node": ">=18" }
+}

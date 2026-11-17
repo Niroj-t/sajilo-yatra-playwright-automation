@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My tickets | Sajilo Yatra</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/bookings">Sajilo <span>Yatra</span></a>
+  <nav aria-label="Main">
+    <a href="/bookings" aria-current="page">My tickets</a>
+    <a href="/profile">My profile</a>
+  </nav>
+  <span class="welcome" data-testid="welcome"></span>
+  <button type="button" id="logout">Log out</button>
+</header>
+
+<main>
+  <h1>My bus tickets</h1>
+
+  <div class="message" role="status" data-testid="message" hidden>
+    <span class="message-text"></span>
+    <button type="button" class="dismiss" aria-label="Dismiss message"></button>
+  </div>
+
+  <section class="card" aria-labelledby="book-title">
+    <h2 id="book-title">Book a ticket</h2>
+    <form id="book-form" novalidate>
+      <div class="grid">
+        <div><label for="passenger">Passenger name</label><input id="passenger"></div>
+        <div><label for="from">From</label><select id="from"></select></div>
+        <div><label for="to">To</label><select id="to"></select></div>
+        <div><label for="seats">Seats</label><input id="seats" type="number" min="1" max="6" value="1"></div>
+        <div><button type="submit" class="primary">Book ticket</button></div>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" aria-labelledby="list-title">
+    <h2 id="list-title">All tickets</h2>
+    <table>
+      <thead><tr><th>Ticket</th><th>Passenger</th><th>Route</th><th>Seats</th><th>Fare</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+  const box = document.querySelector('[data-testid="message"]');
+  function showMessage(text, type) {
+    box.querySelector('.message-text').textContent = text;
+    box.dataset.type = type;
+    box.hidden = false;
+  }
+  box.querySelector('.dismiss').addEventListener('click', () => { box.hidden = true; });
+
+  const rupees = (n) => 'Rs. ' + n.toLocaleString('en-IN');
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  function render(tickets) {
+    document.getElementById('rows').innerHTML = tickets.map((t) => `
+      <tr>
+        <td>${t.no}</td>
+        <td>${esc(t.passenger)}</td>
+        <td>${t.from} to ${t.to}</td>
+        <td>${t.seats}</td>
+        <td data-testid="fare">${rupees(t.fare)}</td>
+        <td><span class="badge ${t.status}" data-testid="status">${t.status}</span></td>
+        <td>${t.status === 'Confirmed' ? `<button type="button" data-no="${t.no}">Cancel</button>` : ''}</td>
+      </tr>`).join('');
+  }
+
+  async function load() {
+    const me = await (await fetch('/api/me')).json();
+    document.querySelector('[data-testid="welcome"]').textContent = 'Namaste, ' + me.name;
+    const data = await (await fetch('/api/tickets')).json();
+    const options = '<option value="">Choose city</option>' + data.cities.map((c) => `<option>${c}</option>`).join('');
+    document.getElementById('from').innerHTML = options;
+    document.getElementById('to').innerHTML = options;
+    render(data.tickets);
+  }
+
+  document.getElementById('book-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const res = await fetch('/api/tickets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        passenger: document.getElementById('passenger').value,
+        from: document.getElementById('from').value,
+        to: document.getElementById('to').value,
+        seats: Number(document.getElementById('seats').value),
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showMessage(data.error, 'error'); return; }
+    showMessage(`Ticket ${data.no} booked for ${data.passenger}`, 'success');
+    document.getElementById('book-form').reset();
+    render((await (await fetch('/api/tickets')).json()).tickets);
+  });
+
+  document.getElementById('rows').addEventListener('click', async (e) => {
+    const no = e.target.dataset && e.target.dataset.no;
+    if (!no) return;
+    const res = await fetch(`/api/tickets/${no}/cancel`, { method: 'POST' });
+    const data = await res.json();
+    if (!res.ok) { showMessage(data.error, 'error'); return; }
+    showMessage(`Ticket ${no} cancelled`, 'success');
+    render((await (await fetch('/api/tickets')).json()).tickets);
+  });
+
+  document.getElementById('logout').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    location.href = '/login?loggedOut=1';
+  });
+
+  load();
+</script>
+</body>
+</html>

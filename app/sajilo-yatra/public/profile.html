@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My profile | Sajilo Yatra</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/bookings">Sajilo <span>Yatra</span></a>
+  <nav aria-label="Main">
+    <a href="/bookings">My tickets</a>
+    <a href="/profile" aria-current="page">My profile</a>
+  </nav>
+  <span class="welcome" data-testid="welcome"></span>
+  <button type="button" id="logout">Log out</button>
+</header>
+
+<main>
+  <h1>My profile</h1>
+  <section class="card" aria-labelledby="details-title">
+    <h2 id="details-title">Traveller details</h2>
+    <dl>
+      <dt>Full name</dt><dd data-testid="profile-name"></dd>
+      <dt>Username</dt><dd data-testid="profile-username"></dd>
+      <dt>Phone</dt><dd data-testid="profile-phone"></dd>
+      <dt>Home city</dt><dd data-testid="profile-city"></dd>
+    </dl>
+  </section>
+</main>
+
+<script>
+  (async () => {
+    const me = await (await fetch('/api/me')).json();
+    document.querySelector('[data-testid="welcome"]').textContent = 'Namaste, ' + me.name;
+    document.querySelector('[data-testid="profile-name"]').textContent = me.name;
+    document.querySelector('[data-testid="profile-username"]').textContent = me.username;
+    document.querySelector('[data-testid="profile-phone"]').textContent = me.phone;
+    document.querySelector('[data-testid="profile-city"]').textContent = me.city;
+  })();
+
+  document.getElementById('logout').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    location.href = '/login?loggedOut=1';
+  });
+</script>
+</body>
+</html>
